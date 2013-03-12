@@ -96,6 +96,7 @@ tumblrTile || (function() {
         var self = this;
         var d = $.Deferred();
         param.api_key = self.config.apiKey;
+        param.offset = Math.floor(Math.random() * 1000);
 
         $.getJSON(
             "https://api.tumblr.com/v2/blog/" + self.config.hostname + "/posts/photo",
