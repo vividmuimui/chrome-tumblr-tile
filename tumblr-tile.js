@@ -22,7 +22,8 @@ tumblrTile || (function() {
         var defaultConfig = {
             hostname : "aoi-miyazaki.tumblr.com",
             baseWidth: 250,
-            margin   : 10
+            margin   : 10,
+            limit    : 20
         };
 
         this.config = $.extend(defaultConfig, config);
@@ -39,7 +40,7 @@ tumblrTile || (function() {
         }
 
         var param = {
-            limit : 20,
+            limit : self.config.limit,
             offset: 0,
         };
 
