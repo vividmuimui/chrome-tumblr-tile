@@ -124,7 +124,9 @@ tumblrTile || (function() {
                     });
 
                     var altSize = val.photos[0].alt_sizes[diffSizes[0].index]
-                    var div = '<div class="item"><a href="' + val.post_url + '"><img src="' + altSize.url+ '" width="' + altSize.width + '" height="' + altSize.height + '" /></a></div>';
+                    width = self.config.baseWidth,
+                    height = altSize.height * (self.config.baseWidth / altSize.width)
+                    var div = '<div class="item"><a href="' + val.post_url + '"><img src="' + altSize.url+ '" width="' + width + '" height="' + height + '" /></a></div>';
                     func(div);
                 });
 
