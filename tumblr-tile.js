@@ -38,25 +38,14 @@ tumblrTile || (function() {
             console.log("not exists api key");
             return 1;
         }
-
-        var param = {
-            limit : self.config.limit,
-            offset: 0,
-        };
-
         var isAccessTumblr = false;
-
-        var items = [];
+        var items = new Array;
         var i = 0;
 
-        self.getTumblrPhotos(param, function(div) {
-            // $("#container").append($(div));
+        self.getTumblrPhotos(function(div) {
             items[i] = div;
             i++;
         }).then(function() {
-
-            param.offset += param.limit;
-
             items = shuffle(items);
             for (i = 0; i <= items.length; i++) {
                 $("#container").append($(items[i]));
@@ -72,16 +61,24 @@ tumblrTile || (function() {
                 if ( isAccessTumblr == false && $(window).scrollTop() + $(window).height() >= $(document).height() ) {
 
                     isAccessTumblr = true;
-                    var divs = "";
+                    var items = "";
 
-                    self.getTumblrPhotos(param, function(div) {
-                        divs += div;
+                    self.getTumblrPhotos(function(div) {
+                       items += div;
+
                     }).then(function() {
+                        var $items = $(items);
 
-                        param.offset += param.limit;
+                        if($items.length !== 0){
+                            for(i = 0 ; i < $items.length ; i++){
+                                $($items.get(i)).css({
+                                    'margin':(self.config.margin / 2),
+                                    'width':self.config.baseWidth
+                                });
+                            }
+                        }
 
-                        var $divs = $(divs);
-                        $("#container").append($divs).masonry( 'appended', $divs, false );
+                        $("#container").append($items).masonry( 'appended', $items, false );
                     }).then(function() {
                         isAccessTumblr = false;
                     });
@@ -91,13 +88,14 @@ tumblrTile || (function() {
 
     }
 
-    function getTumblrPhotos(param, func) {
+    function getTumblrPhotos(func) {
 
         var self = this;
         var d = $.Deferred();
-        param.api_key = self.config.apiKey;
-        param.offset = Math.floor(Math.random() * 1000);
-
+        param = {
+            api_key: self.config.apiKey,
+            offset: Math.floor(Math.random() * 1000),
+        }
         $.getJSON(
             "https://api.tumblr.com/v2/blog/" + self.config.hostname + "/posts/photo",
             param,
@@ -137,16 +135,8 @@ tumblrTile || (function() {
         return d;
     }
 
-    var shuffle = function (items) {
-        var len = items.length;
-        var array = items.concat();
-        var temp = [];
-        var res = [];
-
-        while(len) {
-            temp.push(array.splice(Math.floor(Math.random() * len--), 1));
-        }
-        res[0] = temp.join()
-        return res;
+    var shuffle = function(a){
+        for(var j, x, i = a.length; i; j = parseInt(Math.random() * i), x = a[--i], a[i] = a[j], a[j] = x);
+        return a;
     };
 })();
