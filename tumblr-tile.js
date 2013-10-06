@@ -8,7 +8,10 @@ tumblrTile || (function() {
         loadConfig     : loadConfig,
         draw           : draw,
         getTumblrPhotos: getTumblrPhotos,
+        getPostCount   : getPostCount,
+        drawImages     : drawImages,
         config         : undefined,
+        post_count     : 0
     };
 
     function saveConfig(hash) {
@@ -32,17 +35,22 @@ tumblrTile || (function() {
 
     function draw() {
         var self = this;
-
         self.loadConfig();
-
         if ( ! self.config.apiKey ) {
             console.log("not exists api key");
             return 1;
         }
+        self.getPostCount()
+        .done(function(){
+            self.drawImages();
+        });
+    }
+
+    function drawImages() {
+        var self = this;
         var isAccessTumblr = false;
         var items = new Array;
         var i = 0;
-
         self.getTumblrPhotos(function(div) {
             items[i] = div;
             i++;
@@ -57,7 +65,6 @@ tumblrTile || (function() {
                 isFitWidth: true,
                 isAnimated: true
             });
-        }).then(function() {
             $(window).scroll(function() {
                 if ( isAccessTumblr == false && $(window).scrollTop() + $(window).height() >= $(document).height() ) {
 
@@ -86,7 +93,25 @@ tumblrTile || (function() {
                 }
             });
         });
+    }
 
+    function getPostCount() {
+        var self = this;
+        var d = $.Deferred();
+        param = {
+            api_key: self.config.apiKey,
+            offset: Math.floor(Math.random() * 1000),
+            limit: self.config.limit
+        }
+        $.getJSON(
+            "https://api.tumblr.com/v2/blog/" + self.config.hostname + "/info",
+            param,
+            function(json) {
+                self.post_count = json.response.blog.posts
+                d.resolve();
+            }
+        );
+        return d;
     }
 
     function getTumblrPhotos(func) {
@@ -95,9 +120,10 @@ tumblrTile || (function() {
         var d = $.Deferred();
         param = {
             api_key: self.config.apiKey,
-            offset: Math.floor(Math.random() * 1000),
+            offset: Math.max(Math.floor(Math.random() * self.post_count - self.config.limit), 0 ),
             limit: self.config.limit
         }
+        console.log("offset: " + param.offset + " limit: " + param.limit );
         $.getJSON(
             "https://api.tumblr.com/v2/blog/" + self.config.hostname + "/posts/photo",
             param,
