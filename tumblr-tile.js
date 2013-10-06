@@ -111,9 +111,9 @@ tumblrTile || (function() {
                     var diffSizes = val.photos[0].alt_sizes.map(function(alt_size) {
                         return {
                             diffWidth: Math.abs(alt_size.width - self.config.baseWidth),
-                            index    : j++,
+                            index    : j++
                         };
-                    })
+                    });
 
                     diffSizes.sort(function(a, b) {
                         if ( a.diffWidth > b.diffWidth ) {
@@ -125,9 +125,9 @@ tumblrTile || (function() {
                         return 0;
                     });
 
-                    var altSize = val.photos[0].alt_sizes[diffSizes[0].index]
-                    width = self.config.baseWidth,
-                    height = altSize.height * (self.config.baseWidth / altSize.width)
+                    var altSize = val.photos[0].alt_sizes[diffSizes[0].index];
+                    width = self.config.baseWidth;
+                    height = altSize.height * (self.config.baseWidth / altSize.width);
                     var div = '<div class="item"><a href="' + val.post_url + '"><img src="' + altSize.url+ '" width="' + width + '" height="' + height + '" /></a></div>';
                     func(div);
                 });
