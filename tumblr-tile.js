@@ -96,6 +96,7 @@ tumblrTile || (function() {
         param = {
             api_key: self.config.apiKey,
             offset: Math.floor(Math.random() * 1000),
+            limit: self.config.limit
         }
         $.getJSON(
             "https://api.tumblr.com/v2/blog/" + self.config.hostname + "/posts/photo",
