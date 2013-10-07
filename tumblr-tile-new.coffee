@@ -17,6 +17,23 @@ class NewTile
     config = if strage then JSON.parse(strage) else {}
     @config = $.extend defaultConfig, config
 
+  getPostCount: ->
+    @getJson("/info", {}, (json)=>
+      @postsConut = json.response.blog.posts
+    )
+
+  getJson: (url, param, func) ->
+    d = new $.Deferred
+    p = $.extend { api_key: @config.apiKey }, param
+    $.getJSON(@baseUrl() + url, p, (json) ->
+      func(json)
+      d.resolve()
+    )
+    d
+
+  baseUrl: ->
+    "https://api.tumblr.com/v2/blog/" + @config.hostName
+
 $ ->
   s = new NewTile
   s.loadConfig()
