@@ -22,6 +22,16 @@ class NewTile
       @postsConut = json.response.blog.posts
     )
 
+  getPosts: ->
+    param = {
+      offset: Math.max(Math.floor(Math.random() * @postsConut - @config.limit), 0 ),
+      limit: @config.limit
+    }
+    console.log {offset: param.offset, limit: param.limit, postCount: @postsConut}
+    @getJson("/posts/photo", param, (json) =>
+      @posts = json.response.posts
+    )
+
   getJson: (url, param, func) ->
     d = new $.Deferred
     p = $.extend { api_key: @config.apiKey }, param
