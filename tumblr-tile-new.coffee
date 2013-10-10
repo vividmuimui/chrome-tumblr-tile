@@ -34,7 +34,7 @@ class NewTile
     )
 
   draw: ->
-    for post in @posts
+    for post in _.shuffle(@posts)
       view = @view(post)
       @target_dom.append(view)
 
