@@ -15,7 +15,6 @@ NewTile = (function() {
   NewTile.prototype.loadConfig = function() {
     var config, defaultConfig, strage;
     defaultConfig = {
-      apiKey: "BKst4XKB2qdHl7eOFmjmCXDvYh7lV3xzklIakwcmAgMMSqeNEc",
       hostname: "aoi-miyazaki.tumblr.com",
       baseWidth: 250,
       margin: 10,
