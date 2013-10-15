@@ -19,11 +19,16 @@ class NewTile
     console.log @config
 
   getPostCount: ->
+    d = new $.Deferred
     @getJson("/info", {}, (json)=>
       @postsConut = json.response.blog.posts
+      d.resolve()
     )
+    d
+
 
   getPosts: ->
+    d = new $.Deferred
     param = {
       offset: Math.max(Math.floor(Math.random() * @postsConut - @config.limit), 0 ),
       limit: @config.limit
@@ -31,7 +36,9 @@ class NewTile
     console.log {offset: param.offset, limit: param.limit, postCount: @postsConut}
     @getJson("/posts/photo", param, (json) =>
       @posts = json.response.posts
+      d.resolve()
     )
+    d
 
   draw: ->
     for post in _.shuffle(@posts)
@@ -82,13 +89,10 @@ class NewTile
     '</div>'
 
   getJson: (url, param, func) ->
-    d = new $.Deferred
     p = $.extend { api_key: @config.apiKey }, param
     $.getJSON(@baseUrl() + url, p, (json) ->
       func(json)
-      d.resolve()
     )
-    d
 
   baseUrl: ->
     "https://api.tumblr.com/v2/blog/" + @config.hostname

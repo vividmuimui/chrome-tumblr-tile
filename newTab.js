@@ -5,9 +5,9 @@ $(function() {
   s = new NewTile;
   s.loadConfig();
   s.getPostCount().then(function() {
-    return s.getPosts().then(function() {
-      return s.draw();
-    });
+    return s.getPosts();
+  }).then(function() {
+    return s.draw();
   });
   return s.add_scroll_event();
 });

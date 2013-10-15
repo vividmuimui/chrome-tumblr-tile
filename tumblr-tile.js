@@ -27,15 +27,20 @@ NewTile = (function() {
   };
 
   NewTile.prototype.getPostCount = function() {
-    var _this = this;
-    return this.getJson("/info", {}, function(json) {
-      return _this.postsConut = json.response.blog.posts;
+    var d,
+      _this = this;
+    d = new $.Deferred;
+    this.getJson("/info", {}, function(json) {
+      _this.postsConut = json.response.blog.posts;
+      return d.resolve();
     });
+    return d;
   };
 
   NewTile.prototype.getPosts = function() {
-    var param,
+    var d, param,
       _this = this;
+    d = new $.Deferred;
     param = {
       offset: Math.max(Math.floor(Math.random() * this.postsConut - this.config.limit), 0),
       limit: this.config.limit
@@ -45,9 +50,11 @@ NewTile = (function() {
       limit: param.limit,
       postCount: this.postsConut
     });
-    return this.getJson("/posts/photo", param, function(json) {
-      return _this.posts = json.response.posts;
+    this.getJson("/posts/photo", param, function(json) {
+      _this.posts = json.response.posts;
+      return d.resolve();
     });
+    return d;
   };
 
   NewTile.prototype.draw = function() {
@@ -110,16 +117,13 @@ NewTile = (function() {
   };
 
   NewTile.prototype.getJson = function(url, param, func) {
-    var d, p;
-    d = new $.Deferred;
+    var p;
     p = $.extend({
       api_key: this.config.apiKey
     }, param);
-    $.getJSON(this.baseUrl() + url, p, function(json) {
-      func(json);
-      return d.resolve();
+    return $.getJSON(this.baseUrl() + url, p, function(json) {
+      return func(json);
     });
-    return d;
   };
 
   NewTile.prototype.baseUrl = function() {
